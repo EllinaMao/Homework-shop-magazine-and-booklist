@@ -25,7 +25,7 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Этот файл ничего не делает кроме как хранит задание)");
         }
     }
 }

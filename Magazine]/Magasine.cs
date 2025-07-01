@@ -19,8 +19,16 @@ namespace Task_5
 Реализуйте методы класса для ввода данных, вывода
 данных, реализуйте доступ к отдельным полям через
 методы класса.
+
+Ранее в одном из практических заданий вы создавали
+класс «Журнал». Добавьте к уже созданному классу информацию о количестве сотрудников. Выполните перегрузку
++ (для увеличения количества сотрудников на указанную
+величину), — (для уменьшения количества сотрудников
+на указанную величину), == (проверка на равенство количества сотрудников), < и > (проверка на меньше или
+больше количества сотрудников), != и Equals. Используйте
+механизм свойств для полей класса.
      */
-    public class Magasine : INameIO, IDescriptionIO, IPhoneIO,IDisplayInfo, IEmailIO
+    public class Magasine : INameIO, IDescriptionIO, IPhoneIO, IDisplayInfo, IEmailIO
     {
 
         public string Name { get; set; }
@@ -28,22 +36,33 @@ namespace Task_5
         public long Phone { get; set; }
         public MailAddress Email { get; set; }
         public DateTime YearOfCreation { get; set; }
-
+        public int NumberOfEmployees { get; set; }
         public Magasine()
         {
             Name = string.Empty;
-            Description = string.Empty;
             Email = new MailAddress("example@gmail.com");
+            Description = string.Empty;
             Phone = 0;
             YearOfCreation = DateTime.MinValue;
+            NumberOfEmployees = 0;
         }
-        public Magasine(string name,  string description, string mailadress, long phonenumber, DateTime yearOfCreation)
+        public Magasine(string name, string mailadress = "example@gmail.com", string description = "Unknown", long phonenumber = 0, DateTime? yearOfCreation = null, int numberOfEmployees = 0)
         {
             Name = name;
-            Description = description;
             Email = new MailAddress(mailadress);
+            Description = description;
             Phone = phonenumber;
-            YearOfCreation = yearOfCreation;
+            YearOfCreation = yearOfCreation ?? DateTime.MinValue;
+            NumberOfEmployees = numberOfEmployees;
+        }
+        public Magasine(string name, MailAddress mailadress, string description = "Unknown", long phonenumber = 0, DateTime? yearOfCreation = null, int numberOfEmployees = 0)
+        {
+            Name = name;
+            Email = mailadress;
+            Description = description;
+            Phone = phonenumber;
+            YearOfCreation = yearOfCreation ?? DateTime.MinValue;
+            NumberOfEmployees = numberOfEmployees;
         }
         public void InputName()
         {
@@ -74,20 +93,27 @@ namespace Task_5
             }
 
         }
+        public void InputNumberOfEmployees()
+        {
+            Console.Write("Введите количество сотрудников: ");
+            NumberOfEmployees = Input.UserInput.GetIntFromUser();
+        }
+
+
         public void InputPhone()
         {
             while (true)
             {
-            Console.Write("Введите контактный телефон: ");
-            Phone = Input.UserInput.GetLongFromUser();
-            if (Phone.ToString().Length == 11)
-            {
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Некорректный номер телефона. Пожалуйста, введите 11 цифр.");
-            }
+                Console.Write("Введите контактный телефон: ");
+                Phone = Input.UserInput.GetLongFromUser();
+                if (Phone.ToString().Length == 11)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Некорректный номер телефона. Пожалуйста, введите 11 цифр.");
+                }
             }
         }
 
@@ -97,6 +123,10 @@ namespace Task_5
             YearOfCreation = UserInput.GetDateTimeFromUser("d.M.yyyy");
         }
 
+        public override string ToString()
+        {
+            return $"Название журнала: {Name}, Год основания: {YearOfCreation.Year}, Описание: {Description}, Контактный телефон: {string.Format("{0:+# (###) ###-##-##}", Phone)}, Контактный e-mail: {Email}, Количество сотрудников:{NumberOfEmployees}\n";
+        }
         public void DisplayInfo()
         {//полях класса: 1название журнала, 2год основания, 3описание журнала, 4контактный телефон, 5контактный e-mail.
             string phoneFormatted = string.Format("{0:+# (###) ###-##-##}", Phone);
@@ -104,10 +134,90 @@ namespace Task_5
             $"\nГод основания: {YearOfCreation}" +
                 $"\nОписание журнала: {Description}" +
                 $"\nКонтактный телефон:{phoneFormatted}" +
-                $"\nКонтактный e-mail:{Email}");
+                $"\nКонтактный e-mail:{Email}" +
+                $"\nКоличество сотрудников:{NumberOfEmployees}");
+        }
+        public static Magasine operator +(Magasine magasine, int numberOfEmployees)
+        {
+            return new Magasine
+            {
+                Name = magasine.Name,
+                Description = magasine.Description,
+                YearOfCreation = magasine.YearOfCreation,
+                Phone = magasine.Phone,
+                Email = magasine.Email,
+                NumberOfEmployees = magasine.NumberOfEmployees + numberOfEmployees
+            };
+        }
+        public static Magasine operator +(int numberOfEmployees, Magasine magasine)
+        {
+            return magasine + numberOfEmployees;
+        }
+        public static Magasine operator -(Magasine magasine, int numberOfEmployees)
+        {
+            return new Magasine
+            {
+                Name = magasine.Name,
+                Description = magasine.Description,
+                YearOfCreation = magasine.YearOfCreation,
+                Phone = magasine.Phone,
+                Email = magasine.Email,
+                NumberOfEmployees = magasine.NumberOfEmployees - numberOfEmployees
+            };
         }
 
-    }
+        public static Magasine operator -(int numberOfEmployees, Magasine magasine)
+        {
+            return magasine - numberOfEmployees;
+        }
+        public static bool operator ==(Magasine magasine1, Magasine magasine2)
+        {
+            return magasine1.NumberOfEmployees == magasine2.NumberOfEmployees;
+        }
 
+        public static bool operator !=(Magasine magasine1, Magasine magasine2)
+        {
+            return !(magasine1 == magasine2);
+        }
+
+        /*Выполните перегрузку
++ (для увеличения количества сотрудников на указанную
+величину), — (для уменьшения количества сотрудников
+на указанную величину), == (проверка на равенство количества сотрудников), < и > (проверка на меньше или
+больше количества сотрудников), != и Equals. Используйте
+механизм свойств для полей класса.*/
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Magasine other)
+            {
+                return Name == other.Name &&
+                       Description == other.Description &&
+                       Phone == other.Phone &&
+                       Email.Address.Trim().ToLowerInvariant() == other.Email.Address.Trim().ToLowerInvariant() &&
+                       YearOfCreation == other.YearOfCreation &&
+                       NumberOfEmployees == other.NumberOfEmployees;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Description, Phone, Email, YearOfCreation, NumberOfEmployees);
+        }
+
+        public static bool operator >(Magasine magasine1, Magasine magasine2)
+        {
+            return magasine1.NumberOfEmployees > magasine2.NumberOfEmployees;
+        }
+
+        public static bool operator <(Magasine magasine1, Magasine magasine2)
+        {
+            return magasine1.NumberOfEmployees < magasine2.NumberOfEmployees;
+
+
+
+        }
+    }
 }
 
