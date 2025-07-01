@@ -24,6 +24,10 @@ namespace BookList
         {
             books.Add(book);
         }
+        public void RemoveBook(int index)
+        {
+            books.RemoveAt(index);
+        }
         public void RemoveBook(Book book)
         {
             books.Remove(book);
